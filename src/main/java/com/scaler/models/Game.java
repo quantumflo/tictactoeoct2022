@@ -1,9 +1,13 @@
 package com.scaler.models;
 
+import com.scaler.exceptions.DuplicateSymbolException;
+import com.scaler.factories.GameWinningStrategyFactory;
 import com.scaler.strategies.winningstrategy.GameWinningStrategy;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Game {
     private List<Player> players;
@@ -13,6 +17,12 @@ public class Game {
     private int lastMovedPlayerIndex;
     private GameStatus gameStatus;
     private Player winner;
+
+    private Game() {}
+
+    public static Builder getBuilder() {
+        return new Builder();
+    }
 
     public List<Player> getPlayers() {
         return players;
@@ -42,4 +52,49 @@ public class Game {
         return winner;
     }
 
+    public static class Builder {
+        private List<Player> players;
+        private List<GameWinningStrategy> gameWinningStrategies;
+
+        public Builder setPlayers(List<Player> players) {
+            this.players = players;
+            return this;
+        }
+
+        public Builder setGameWinningStrategies(List<GameWinningStrategyName> gameWinningStrategiesNames) {
+            this.gameWinningStrategies = new ArrayList<>();
+
+            for (GameWinningStrategyName gameWinningStrategyName: gameWinningStrategiesNames) {
+                this.gameWinningStrategies.add(GameWinningStrategyFactory.getGameWinningStrategyByName(gameWinningStrategyName));
+            }
+            return this;
+        }
+
+        public Game build() {
+            Set<Character> alreadyExistingCharacters = new HashSet<>();
+
+            for (Player player: players) {
+                if (alreadyExistingCharacters.contains(
+                        player.getSymbol().getCharacter())) {
+                    throw new DuplicateSymbolException(player.getSymbol().getCharacter());
+                }
+                alreadyExistingCharacters.add(player.getSymbol().getCharacter());
+            }
+
+            Game game = new Game();
+            game.gameStatus = GameStatus.IN_PROGRESS;
+            game.gameWinningStrategies = gameWinningStrategies;
+            game.players = players;
+            game.moves = new ArrayList<>();
+            game.board = new Board(players.size() + 1);
+            game.lastMovedPlayerIndex = -1;
+
+            return game;
+        }
+    }
+
 }
+
+// Game class:
+// i. Lots of attributes
+// ii. Need validation (every player must have a different symbol

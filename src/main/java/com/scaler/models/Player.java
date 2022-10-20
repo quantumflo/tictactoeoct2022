@@ -13,4 +13,15 @@ public class Player {
         return playerType;
     }
 
+    public void setSymbol(Symbol symbol) {
+        this.symbol = symbol;
+    }
+
+    public void setPlayerType(PlayerType playerType) {
+        this.playerType = playerType;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
