@@ -17,6 +17,7 @@ public class Game {
     private int lastMovedPlayerIndex;
     private GameStatus gameStatus;
     private Player winner;
+    private int filledCells = 0;
 
     private Game() {}
 
@@ -50,6 +51,41 @@ public class Game {
 
     public Player getWinner() {
         return winner;
+    }
+
+    public void makeMove() {
+        board.display();
+
+
+
+        this.lastMovedPlayerIndex += 1;
+        this.lastMovedPlayerIndex %= players.size();
+        System.out.println(this.players.get(lastMovedPlayerIndex).getName() + "'s turn");
+        Move potentialMove = this.players.get(this.lastMovedPlayerIndex).makeMove(this.board);
+
+        if (this.board.getCell(potentialMove.getRow(), potentialMove.getColumn()).getPlayer() != null) {
+            System.out.println("Bad Move Try Again!");
+            return;
+        }
+
+        this.moves.add(potentialMove);
+        this.board.getCell(potentialMove.getRow(), potentialMove.getColumn()).setPlayer(
+                this.players.get(lastMovedPlayerIndex)
+        );
+
+        filledCells += 1;
+
+        for (GameWinningStrategy gameWinningStrategy: gameWinningStrategies) {
+            if (gameWinningStrategy.checkVictory(board, potentialMove)) {
+                gameStatus = GameStatus.ENDED;
+                winner = this.players.get(lastMovedPlayerIndex);
+                return;
+            }
+        }
+
+        if (filledCells == (this.players.size() + 1) * (this.players.size() + 1)) {
+            gameStatus = GameStatus.DRAW;
+        }
     }
 
     public static class Builder {

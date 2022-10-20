@@ -7,6 +7,10 @@ public class Board {
     private int dimension;
     private List<List<Cell>> board;
 
+    public Cell getCell(int row, int col) {
+        return board.get(row).get(col);
+    }
+
     public Board(int dimension) {
         this.dimension = dimension;
         this.board = new ArrayList<>(); //[ [(), (), ()], [], []]
@@ -15,7 +19,7 @@ public class Board {
             this.board.add(new ArrayList<>()); //[]
 
             for (int j = 0; j < dimension; ++j) {
-                this.board.get(i).add(new Cell());
+                this.board.get(i).add(new Cell(i, j));
             }
         }
     }
@@ -26,6 +30,19 @@ public class Board {
 
     public List<List<Cell>> getBoard() {
         return board;
+    }
+
+    public void display() {
+        for (List<Cell> row: board) {
+            for (Cell cell: row) {
+                if (cell.getPlayer() == null) {
+                    System.out.print(" - ");
+                } else {
+                    System.out.print(" " + cell.getPlayer().getSymbol().getCharacter() + " ");
+                }
+            }
+            System.out.println();
+        }
     }
 
 

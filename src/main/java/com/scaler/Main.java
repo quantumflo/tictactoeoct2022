@@ -3,10 +3,7 @@ package com.scaler;
 import com.scaler.factories.BotDifficultyLevelFactory;
 import com.scaler.factories.GameWinningStrategyNameEnumFactory;
 import com.scaler.factories.PlayerFactory;
-import com.scaler.models.BotDifficultyLevel;
-import com.scaler.models.Game;
-import com.scaler.models.GameWinningStrategyName;
-import com.scaler.models.Player;
+import com.scaler.models.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +32,7 @@ public class Main {
             String difficultyLevel = scanner.next();
             BotDifficultyLevel botDifficultyLevel = BotDifficultyLevelFactory.getBotDifficultyLevelByName(difficultyLevel);
 
-            players.add(PlayerFactory.createBot(botName, character, botDifficultyLevel))
+            players.add(PlayerFactory.createBot(botName, character, botDifficultyLevel));
         }
 
         for (int i = numberOfBots; i < numberOfPlayers; ++i) {
@@ -64,7 +61,10 @@ public class Main {
                                 .setPlayers(players)
                                         .build();
 
-        System.out.println("Hello world!");
+        while (game.getGameStatus().equals(GameStatus.IN_PROGRESS)) {
+            game.makeMove();
+        }
+
     }
 }
 
@@ -76,3 +76,15 @@ public class Main {
 // 1. Create Players, choose symbols
 // 2. Determine the size
 // 3. Decide Winning Rules
+
+// Break till 10: 35 PM
+
+// 1. Implement all the 3 WinningStrategies
+//   a. COLUMN
+//   b. ROW
+//   c. Diagonal
+
+// 2. After the game status is no longer IN_PROGRESS, print if draw => Draw
+// Else print Congrats {Name}!
+
+// Ref: https://github.com/Naman-Bhalla/ticTacToeJul22
